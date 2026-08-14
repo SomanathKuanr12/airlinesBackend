@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 
-const authRoutes = require('./routes/auth.route');
+const authRouter = require('./routes/auth.route');
 const adminRoutes = require('./routes/admin.route');
 const userRoutes = require('./routes/user.route');
 
@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
  * Routes
  */
 
-app.use('/auth', authRoutes);
+app.use('/auth', authRouter);
 
 app.use('/admin', adminRoutes);
 

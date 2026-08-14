@@ -41,7 +41,9 @@ const signUp = async (signUpRequest) => {
     // Save user
     const result =
         await authRepository.saveUser(
-            signUpRequest,
+            signUpRequest.name,
+            signUpRequest.email,
+            signUpRequest.phone,
             role,
             encodedPassword
         );
