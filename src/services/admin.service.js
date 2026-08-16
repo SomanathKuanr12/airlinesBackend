@@ -7,41 +7,29 @@ const getDashboardData=async(email)=>{
     const totalRevenue=await adminRepository.getTotalRevenue();
     const recentActions=await adminRepository.recentActions(email);
     const result={
-        totalFlights:totalFlights,
-    totalUsers:totalUsers,
-    totalBookings:totalBookings,
-    totalRevenue:totalRevenue,
+        totalFlights:totalFlights[0].totalFlights,
+    totalUsers:totalUsers[0].totalUsers,
+    totalBookings:totalBookings[0].totalBookings,
+    totalRevenue:totalRevenue[0].totalRevenue,
     recentActions:recentActions
     }
     return result;
 }
 
 const getAllFlights = async ({ page, size }) => {
+    const flights = await adminRepository.getFlights(page, size);
 
-    const flights =
-        await adminRepository.getFlights(
-            page,
-            size
-        );
-
-    const totalRecords =
-        await adminRepository.getFlightCount();
+    const totalRecordsResult = await adminRepository.getFlightCount();
+    const totalRecords = totalRecordsResult[0].totalFlights; // number
 
     return {
-
         flights,
-
         totalRecords,
-
         currentPage: Number(page),
-
-        totalPages: Math.ceil(
-            totalRecords / size
-        )
-
+        totalPages: Math.ceil(totalRecords / size)
     };
-
 };
+
 
 const getFlightsByFilter = async ({ page, size,searchText,sortBy }) => {
 
@@ -54,7 +42,7 @@ const getFlightsByFilter = async ({ page, size,searchText,sortBy }) => {
         );
 
     const totalRecords =
-        await adminRepository.getFlightCount();
+        await adminRepository.getFlightCountByFilter(searchText);
 
     return {
 
@@ -97,13 +85,15 @@ const updateFlight = async (
     return result;
 };
 
-const deleteFlight = async (
-    flightId
+const cancelFlight = async (
+    flightId,
+    canceledBy
 ) => {
 
     const result =
-        await adminRepository.deleteFlight(
-            flightId
+        await adminRepository.cancelFlight(
+            flightId,
+            canceledBy
         );
 
     if (result.affectedRows === 0) {
@@ -131,12 +121,12 @@ const createFlight=async(flight,createdBy)=>{
 
 
 ////////////////////////////manage_users service/////////////
-const getAllUsers=async({page,size,sortBy})=>{
-return await adminRepository.getAllUsers(page,size,sortBy);
+const getAllUsers=async({page,size,role,sortBy})=>{
+return await adminRepository.getAllUsers(page,size,role,sortBy);
 }
 
-const searchUsers=async({page,size,searchText,sortBy})=>{
-return await adminRepository.searchUsers(page,size,searchText,sortBy);
+const searchUsers=async({page,size,searchText,role,sortBy})=>{
+return await adminRepository.searchUsers(page,size,searchText,role,sortBy);
 }
 
 const updateUser=async(userId,user)=>{
@@ -159,10 +149,10 @@ const getReportSummary=async()=>{
     const totalRevenue=await adminRepository.getTotalRevenue();
 
     const result={
-        totalFlights:totalFlights,
-    totalUsers:totalUsers,
-    totalBookings:totalBookings,
-    totalRevenue:totalRevenue
+    totalFlights:totalFlights[0].totalFlights,
+    totalUsers:totalUsers[0].totalUsers,
+    totalBookings:totalBookings[0].totalBookings,
+    totalRevenue:totalRevenue[0].totalRevenue,
     }
     return result;
 }
@@ -192,7 +182,7 @@ module.exports={
     getAllFlights,
     getFlightsByFilter,
     updateFlight,
-    deleteFlight,
+    cancelFlight,
     createFlight,
 
     getAllUsers,

@@ -11,7 +11,7 @@ adminRoutes.get('/flights',adminController.getAllFlights)
 adminRoutes.get('/search_flight',adminController.getFlightsByFilter)
 adminRoutes.post('/add_flight',adminController.createFlight)
 adminRoutes.put('/update_flight/:flightId',adminController.updateFlight)
-adminRoutes.delete('/delete_flight/:flightId',adminController.deleteFlight)
+adminRoutes.put('/cancel_flight/:flightId',adminController.cancelFlight)
 
 //manage_user routes
 adminRoutes.get('/get_users',adminController.getAllUsers)
@@ -26,3 +26,8 @@ adminRoutes.get('/top_performers_flight',adminController.getTopPerformerFlight)
 adminRoutes.post('/top_performers_flight_search_date',adminController.getTopPerformerFlightByDate)
 
 module.exports=adminRoutes
+
+// {
+//     "email":"soman@ai.com",
+//     "password":"1234"
+// }

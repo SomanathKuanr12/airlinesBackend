@@ -51,9 +51,16 @@ const getFlightsByFilter = async (req,res,next) => {
 
         const page =Number(req.query.page) || 1;
         const size =Number(req.query.size) || 10;
-        const searchText=req.query.searchText;
-        const sortBy=req.query.sortBy || 'journey_date'
+        const source=req.query.source
+        const destination=req.query.destination
+        const date=req.query.journey_date
 
+        const sortBy=req.query.sortBy || 'journey_date'
+        const searchText={
+            source:source,
+            destination:destination,
+            date:date
+        }
 
 const result = await adminService.getFlightsByFilter({page,size,searchText,sortBy});
             res.status(200).json({
@@ -84,20 +91,21 @@ const updateFlight=async(req,res,next)=>{
     }
 }
 
-const deleteFlight = async (
+const cancelFlight = async (
     req,
     res,
     next
 ) => {
-
+  
     try {
-
+          const canceledBy=req.user.email
         const flightId =
             req.params.flightId;
 
         const result =
-            await adminService.deleteFlight(
-                flightId
+            await adminService.cancelFlight(
+                flightId,
+                canceledBy
             );
 
         res.status(200).json({
@@ -105,7 +113,7 @@ const deleteFlight = async (
             status: 'SUCCESS',
 
             message:
-                'Flight deleted successfully',
+                'Flight canceled successfully',
 
 
         });
@@ -131,14 +139,15 @@ const createFlight=async(req,res,next)=>{
 }
 
 
-////////////////////////////////manage flights controller////////////////
+////////////////////////////////manage user controller////////////////
 
 const getAllUsers=async(req,res,next)=>{
     try{
         const page=Number(req.query.page) ||1
         const size=Number(req.query.size) ||10
         const sortBy=req.query.sortBy ||'name'
-        const result=await adminService.getAllUsers({page,size,sortBy});
+        const role=req.query.role ||'USER'
+        const result=await adminService.getAllUsers({page,size,role,sortBy});
         return res.status(200).json({
             status:'SUCCESS',
             message:'User fetched Successfully',
@@ -157,8 +166,9 @@ const searchUsers=async(req,res,next)=>{
         const page=Number(req.query.page) ||1
         const size=Number(req.query.size) ||10
         const sortBy=req.query.sortBy ||'name'
+        const role=req.query.role ||'USER'
         const searchText=req.query.searchText
-        const result=await adminService.searchUsers({page,size,searchText,sortBy});
+        const result=await adminService.searchUsers({page,size,searchText,role,sortBy});
         return res.status(200).json({
             status:'SUCCESS',
             message:'User fetched Successfully',
@@ -275,7 +285,7 @@ module.exports = {
     getFlightsByFilter,
     createFlight,
     updateFlight,
-    deleteFlight,
+    cancelFlight,
 
     getAllUsers,
     searchUsers,

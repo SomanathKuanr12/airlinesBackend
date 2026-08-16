@@ -12,7 +12,7 @@ const findByEmail=async(email)=>{
 const query=`SELECT *
             FROM user_admin_details 
             WHERE email=?;`
-const [rows]=await pool.execute(query,email);
+const [rows]=await pool.execute(query,[email]);
 return rows[0];
 }
 
