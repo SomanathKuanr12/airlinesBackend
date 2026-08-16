@@ -5,6 +5,9 @@ const authRouter = require('./routes/auth.route');
 const adminRoutes = require('./routes/admin.route');
 const userRoutes = require('./routes/user.route');
 
+const verifyToken =require('./middleware/auth.middleware');
+const authorize =require('./middleware/role.middleware');
+
 const app = express();
 
 /*
@@ -38,11 +41,24 @@ app.get('/', (req, res) => {
  * Routes
  */
 
-app.use('/auth', authRouter);
+app.use(
+    '/auth',
+    authRouter
+);
 
-app.use('/admin', adminRoutes);
+app.use(
+    '/admin',
+    verifyToken,
+    authorize('ADMIN'),
+    adminRoutes
+);
 
-app.use('/user', userRoutes);
+app.use(
+    '/user',
+    verifyToken,
+    authorize('USER', 'ADMIN'),
+    userRoutes
+);
 
 /*
  * 404 Handler
